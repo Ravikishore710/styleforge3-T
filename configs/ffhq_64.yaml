@@ -1,0 +1,6 @@
+experiment: ffhq64
+img_resolution: 64
+data_dir: data/ffhq_r64
+batch_size: 64
+train_kimg: 800
+snap_kimg: 50

@@ -1,0 +1,6 @@
+experiment: ffhq256
+img_resolution: 256
+data_dir: data/ffhq_r256
+batch_size: 32
+train_kimg: 1600
+snap_kimg: 80

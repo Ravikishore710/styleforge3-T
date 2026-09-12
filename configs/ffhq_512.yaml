@@ -1,0 +1,7 @@
+experiment: ffhq512
+img_resolution: 512
+data_dir: data/ffhq_r512
+batch_size: 16
+train_kimg: 4000
+snap_kimg: 200
+eval_images: 5000

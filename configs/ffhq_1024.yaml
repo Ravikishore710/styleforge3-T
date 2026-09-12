@@ -1,0 +1,8 @@
+experiment: ffhq1024
+img_resolution: 1024
+data_dir: data/ffhq_r1024
+batch_size: 8
+train_kimg: 25000
+snap_kimg: 250
+eval_images: 5000
+gamma: 32.8

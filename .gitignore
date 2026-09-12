@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+.venv/
+venv/
+data/
+outputs/**
+!outputs/**/
+!outputs/**/.gitkeep
+*.npy
+!outputs/w_mean*.npy
+.DS_Store
