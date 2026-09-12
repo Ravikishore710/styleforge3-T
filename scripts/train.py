@@ -25,9 +25,19 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", required=True)
     ap.add_argument("--resume", action="store_true")
+    ap.add_argument("--data-dir", default=None, help="Override data_dir")
+    ap.add_argument("--batch-size", type=int, default=None, help="Override batch_size")
+    ap.add_argument("--train-kimg", type=int, default=None, help="Override train_kimg")
     args = ap.parse_args()
 
-    cfg = load_config(args.config)
+    overrides = {}
+    if args.data_dir:
+        overrides["data_dir"] = args.data_dir
+    if args.batch_size:
+        overrides["batch_size"] = args.batch_size
+    if args.train_kimg:
+        overrides["train_kimg"] = args.train_kimg
+    cfg = load_config(args.config, **overrides)
     tf.random.set_seed(int(cfg["seed"]))
     if int(cfg["mixed_precision"]):
         tf.keras.mixed_precision.set_global_policy("mixed_float16")
