@@ -124,5 +124,5 @@ class SynthesisNetwork(tf.keras.layers.Layer):
         for i, layer in enumerate(self.layers):
             x = layer(x, ws[:, i + 1], noise_mode=noise_mode, training=training)
         styles = self.torgb_affine(ws[:, -1])
-        x = self.torgb(x, styles) + self.torgb_bias
-        return x
+        x = self.torgb(x, styles) + tf.cast(self.torgb_bias, x.dtype)
+        return tf.cast(x, tf.float32)

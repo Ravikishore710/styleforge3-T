@@ -51,17 +51,21 @@ class SynthesisInput(tf.keras.layers.Layer):
 
     def call(self, w, shift=(0.0, 0.0)):
         B = tf.shape(w)[0]
-        t = self.affine(w)                                   # (B,4)
+        w = tf.cast(w, tf.float32)
+        t = tf.cast(self.affine(w), tf.float32)                                # (B,4)
         t = tf.reshape(t, [B, 2, 2])
-        f = tf.matmul(t, tf.cast(self.freqs, tf.float32), transpose_b=True)  # (B,2,C)
+        f = tf.matmul(t, tf.cast(self.freqs, tf.float32), transpose_b=True)   # (B,2,C)
         coords = tf.cast(self.grid, tf.float32)
-        if shift != (0.0, 0.0):
-            pixel = 2.0 / float(self.res)                   # unit length per pixel
-            coords = coords - tf.constant([shift[1] * pixel, shift[0] * pixel],
-                                          tf.float32)[None, :]
-        ang = 2.0 * np.pi * tf.matmul(coords, f)             # (B,N,C)
+        try:
+            sy, sx = float(shift[0]), float(shift[1])
+        except Exception:
+            sy, sx = 0.0, 0.0
+        if sy != 0.0 or sx != 0.0:
+            pixel = 2.0 / float(self.res)                                      # unit length per pixel
+            coords = coords - tf.constant([sx * pixel, sy * pixel], tf.float32)[None, :]
+        ang = 2.0 * np.pi * tf.matmul(coords, f)                              # (B,N,C)
         ang = ang + tf.cast(self.phases, tf.float32)[None, None, :]
-        x = tf.sin(ang)                                      # (B,N,C)
-        x = tf.matmul(x, tf.cast(self.weight, tf.float32))   # channel mixing
+        x = tf.sin(ang)                                                       # (B,N,C)
+        x = tf.matmul(x, tf.cast(self.weight, tf.float32))                    # channel mixing
         x = tf.reshape(x, [B, self.size, self.size, self.channels])
-        return x
+        return tf.cast(x, self.compute_dtype)
