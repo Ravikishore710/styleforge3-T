@@ -115,6 +115,7 @@ class ModulatedConv2D(tf.keras.layers.Layer):
         out = tf.map_fn(
             lambda elem: tf.nn.conv2d(elem[0][None], elem[1], strides=[1, 1, 1, 1], padding="VALID")[0],
             (x_pad, w),
-            fn_output_signature=tf.float32
+            fn_output_signature=tf.float32,
+            parallel_iterations=16
         )
         return tf.cast(out, self.compute_dtype)

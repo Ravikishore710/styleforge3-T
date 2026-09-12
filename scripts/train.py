@@ -28,6 +28,8 @@ def main():
     ap.add_argument("--data-dir", default=None, help="Override data_dir")
     ap.add_argument("--batch-size", type=int, default=None, help="Override batch_size")
     ap.add_argument("--train-kimg", type=int, default=None, help="Override train_kimg")
+    ap.add_argument("--tick-kimg", type=int, default=None, help="Override tick_kimg")
+    ap.add_argument("--snap-kimg", type=int, default=None, help="Override snap_kimg")
     args = ap.parse_args()
 
     overrides = {}
@@ -37,6 +39,10 @@ def main():
         overrides["batch_size"] = args.batch_size
     if args.train_kimg:
         overrides["train_kimg"] = args.train_kimg
+    if args.tick_kimg:
+        overrides["tick_kimg"] = args.tick_kimg
+    if args.snap_kimg:
+        overrides["snap_kimg"] = args.snap_kimg
     cfg = load_config(args.config, **overrides)
     tf.random.set_seed(int(cfg["seed"]))
     if int(cfg["mixed_precision"]):

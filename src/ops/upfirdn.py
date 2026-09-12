@@ -10,12 +10,22 @@ import numpy as np
 import tensorflow as tf
 
 
-def _as_2d_filter(f) -> np.ndarray:
-    f = np.asarray(f, dtype=np.float32)
-    if f.ndim == 1:
-        return np.outer(f, f)
-    assert f.ndim == 2 and f.shape[0] == f.shape[1]
-    return f
+_FILTER_CACHE: dict = {}
+
+
+def _get_separable_filters(f, cin: int):
+    f1 = np.asarray(f, dtype=np.float32)
+    if f1.ndim == 2:
+        f1 = f1[0]
+    key = (tuple(f1.tolist()), cin)
+    if key not in _FILTER_CACHE:
+        kh = len(f1)
+        px = (kh - 1) // 2
+        arr_x = np.tile(f1[None, :, None, None], [1, 1, cin, 1])
+        arr_y = np.tile(f1[:, None, None, None], [1, 1, cin, 1])
+        _FILTER_CACHE[key] = (arr_x, arr_y, px)
+    arr_x, arr_y, px = _FILTER_CACHE[key]
+    return tf.constant(arr_x, dtype=tf.float32), tf.constant(arr_y, dtype=tf.float32), px
 
 
 def _upsample_zero_stuff(x: tf.Tensor, up: int) -> tf.Tensor:
@@ -32,18 +42,24 @@ def upfirdn2d(x: tf.Tensor, f, up: int = 1, down: int = 1,
     decimate by `down`. Output length along each axis: floor((H*up)/down)."""
     in_dtype = x.dtype
     x = tf.cast(x, tf.float32)
-    f2 = _as_2d_filter(f)
-    kh = int(f2.shape[0])
-    px = (kh - 1) // 2
+    cin = int(x.shape[-1])
+    filtx, filty, px = _get_separable_filters(f, cin)
+
     if up > 1:
         x = _upsample_zero_stuff(x, up)
-    x = tf.pad(x, [[0, 0], [px, px], [px, px], [0, 0]])
-    cin = int(x.shape[-1])
-    filt = tf.constant(np.tile(f2[:, :, None, None], [1, 1, cin, 1]))
-    x = tf.nn.depthwise_conv2d(x, filt, strides=[1, 1, 1, 1], padding="VALID")
+
+    # 1D horizontal pass
+    xp = tf.pad(x, [[0, 0], [0, 0], [px, px], [0, 0]])
+    x = tf.nn.depthwise_conv2d(xp, filtx, strides=[1, 1, 1, 1], padding="VALID")
+
+    # 1D vertical pass
+    yp = tf.pad(x, [[0, 0], [px, px], [0, 0], [0, 0]])
+    x = tf.nn.depthwise_conv2d(yp, filty, strides=[1, 1, 1, 1], padding="VALID")
+
     if down > 1:
         x = x[:, ::down, ::down, :]
-    x = x * np.float32(gain)
+    if gain != 1.0:
+        x = x * np.float32(gain)
     return tf.cast(x, in_dtype)
 
 

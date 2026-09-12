@@ -125,8 +125,16 @@ class Trainer:
         snap_nimg = int(self.cfg["snap_kimg"]) * 1000
         interval = int(self.cfg["r1_interval"])
         rng = np.random.default_rng(int(self.cfg["seed"]))
-        t_start, next_tick, next_snap = time.time(), tick_nimg, snap_nimg
+        t_start = time.time()
+        t_last_tick, n_last_tick = t_start, int(self.cur_nimg)
+        next_tick = int(self.cur_nimg) + tick_nimg
+        next_snap = int(self.cur_nimg) + snap_nimg
         loss_g = loss_d = r1_val = None
+
+        def fmt_time(sec):
+            m, s = divmod(int(sec), 60)
+            h, m = divmod(m, 60)
+            return f"{h}h {m:02d}m" if h > 0 else f"{m}m {s:02d}s"
 
         it = iter(self.dataset)
         while int(self.cur_nimg) < target_nimg:
@@ -154,19 +162,28 @@ class Trainer:
                 print(f"[warn] non-finite loss at kimg={float(self.cur_nimg)/1000:.1f}")
             n = int(self.cur_nimg)
             if n >= next_tick:
+                t_now = time.time()
+                tick_dur = max(t_now - t_last_tick, 1e-6)
+                cur_speed = round((n - n_last_tick) / tick_dur, 1)
+                t_last_tick, n_last_tick = t_now, n
+                elapsed = t_now - t_start
+                eta = (target_nimg - n) / max(cur_speed, 1e-6)
+
                 next_tick += tick_nimg
                 stats = self._log_tick({
                     "loss_G": float(loss_g), "loss_D": float(loss_d),
                     "r1": float(r1_val) if r1_val is not None else -1.0,
                     "D_real": float(real_scr), "D_fake": float(fake_scr),
                     "ema_decay": self.ema._decay(float(n), float(self.batch)),
-                    "imgs_per_s": round(n / max(time.time() - t_start, 1e-9), 1),
+                    "imgs_per_s": cur_speed,
+                    "elapsed_sec": round(elapsed, 1),
+                    "eta_sec": round(eta, 1),
                 })
                 if verbose:
                     print(f"kimg {stats['kimg']:>7.0f} | G {stats['loss_G']:.3f} | "
                           f"D {stats['loss_D']:.3f} | R1 {stats['r1']:.4f} | "
                           f"Dreal {stats['D_real']:.3f} Dfake {stats['D_fake']:.3f} | "
-                          f"{stats['imgs_per_s']:.0f} img/s")
+                          f"{stats['imgs_per_s']:.0f} img/s | elapsed: {fmt_time(elapsed)} | ETA: {fmt_time(eta)}")
             if n >= next_snap:
                 next_snap += snap_nimg
                 self.save()
