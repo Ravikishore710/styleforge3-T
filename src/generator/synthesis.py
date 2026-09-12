@@ -59,8 +59,8 @@ class SynthesisLayer(tf.keras.layers.Layer):
         x = self.conv(x, styles)
         mode = noise_mode or self.noise_mode
         if mode != "none":
-            noise = (tf.random.normal(tf.shape(x)) if mode == "random"
-                     else self.const_noise)
+            noise = (tf.random.normal(tf.shape(x), dtype=x.dtype) if mode == "random"
+                     else tf.cast(self.const_noise, x.dtype))
             x = x + noise * tf.cast(self.noise_strength, x.dtype)
         if not self.critical:
             return filtered_lrelu(x, fu=self.fu, fd=self.fd, up=2, down=1,

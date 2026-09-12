@@ -39,7 +39,7 @@ class MinibatchStd(tf.keras.layers.Layer):
         std = tf.sqrt(tf.maximum(var, 0.0) + 1e-14)
         std = tf.reduce_mean(std, axis=-1, keepdims=True)      # (B/gs,H,W,1)
         std = tf.tile(std, [gs, 1, 1, 1])
-        return tf.cast(tf.concat([x, std], axis=-1), x.dtype)
+        return tf.concat([x, tf.cast(std, x.dtype)], axis=-1)
 
 
 class DiscriminatorBlock(tf.keras.layers.Layer):
@@ -87,4 +87,4 @@ class Discriminator(tf.keras.Model):
         x = lrelu(self.conv_final(x))
         x = tf.reshape(x, [tf.shape(x)[0], -1])
         x = lrelu(self.fc(x))
-        return self.logit(x)   # (B, 1), float32
+        return tf.cast(self.logit(x), tf.float32)   # (B, 1), float32
