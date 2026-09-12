@@ -25,11 +25,15 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", required=True)
     ap.add_argument("--resume", action="store_true")
+    ap.add_argument("--resume-dir", default=None, help="Directory or checkpoint path to resume from")
     ap.add_argument("--data-dir", default=None, help="Override data_dir")
     ap.add_argument("--batch-size", type=int, default=None, help="Override batch_size")
     ap.add_argument("--train-kimg", type=int, default=None, help="Override train_kimg")
     ap.add_argument("--tick-kimg", type=int, default=None, help="Override tick_kimg")
     ap.add_argument("--snap-kimg", type=int, default=None, help="Override snap_kimg")
+    ap.add_argument("--github-repo", default=None, help="Override GitHub repo for backup (owner/repo)")
+    ap.add_argument("--drive-dir", default=None, help="Google Drive directory for backup")
+    ap.add_argument("--no-backup", action="store_true", help="Disable automatic cloud backups")
     args = ap.parse_args()
 
     overrides = {}
@@ -43,6 +47,14 @@ def main():
         overrides["tick_kimg"] = args.tick_kimg
     if args.snap_kimg:
         overrides["snap_kimg"] = args.snap_kimg
+    if args.resume_dir:
+        overrides["resume_dir"] = args.resume_dir
+    if args.github_repo:
+        overrides["github_repo"] = args.github_repo
+    if args.drive_dir:
+        overrides["drive_dir"] = args.drive_dir
+    if args.no_backup:
+        overrides["auto_backup"] = False
     cfg = load_config(args.config, **overrides)
     tf.random.set_seed(int(cfg["seed"]))
     if int(cfg["mixed_precision"]):
@@ -62,7 +74,7 @@ def main():
     print(f"[model] G params: {G.count_params():,} | D params: {D.count_params():,}")
 
     trainer = Trainer(cfg, G, D, G_ema, dataset)
-    result = trainer.fit(resume=args.resume)
+    result = trainer.fit(resume=args.resume or bool(args.resume_dir))
     print(result)
     save_config(cfg, str(Path(cfg["output_dir"]) / "config_resolved.yaml"))
 

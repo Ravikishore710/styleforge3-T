@@ -75,6 +75,7 @@ def test_generator_noise_modes():
 
 
 def test_generator_shift_moves_content():
+    tf.random.set_seed(42)
     cfg = _cfg(64, noise_mode="const")
     G = Generator(cfg)
     _ = G(tf.zeros([1, 512]))

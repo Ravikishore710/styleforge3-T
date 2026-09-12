@@ -54,6 +54,10 @@ class Trainer:
         self.summary = tf.summary.create_file_writer(
             str(Path(cfg["output_dir"]) / "logs" / "tensorboard"))
         self._nan_seen = False
+        self.drive_dir = cfg.get("drive_dir")
+        self.github_repo = cfg.get("github_repo")
+        self.auto_backup = bool(cfg.get("auto_backup", True))
+        self.resume_dir = cfg.get("resume_dir")
 
     # ---- compiled steps ----
     @tf.function
@@ -118,8 +122,8 @@ class Trainer:
 
     # ---- main loop ----
     def fit(self, resume: bool = False, verbose: bool = True) -> dict:
-        if resume:
-            self.ckpt.restore()
+        if resume or self.resume_dir:
+            self.ckpt.restore(resume_dir=self.resume_dir)
         target_nimg = int(self.cfg["train_kimg"]) * 1000
         tick_nimg = int(self.cfg["tick_kimg"]) * 1000
         snap_nimg = int(self.cfg["snap_kimg"]) * 1000
@@ -193,8 +197,45 @@ class Trainer:
         return {"final_kimg": float(self.cur_nimg) / 1000.0,
                 "nan_seen": self._nan_seen}
 
+    def _generate_sample_grid(self, kimg: float) -> Path | None:
+        try:
+            from ..inference.sampling import generate, save_grid, seeded_z
+            samples_dir = Path(self.cfg["output_dir"]) / "samples"
+            samples_dir.mkdir(parents=True, exist_ok=True)
+            grid_path = samples_dir / f"sample_kimg_{int(kimg):04d}.png"
+            latest_grid = samples_dir / "latest.png"
+            z = seeded_z(16, int(self.cfg["z_dim"]), seed=42)
+            self.ema.copy_to(self.G_ema)
+            imgs = generate(self.G_ema, z, noise_mode="const")
+            save_grid(imgs, str(grid_path), cols=4)
+            save_grid(imgs, str(latest_grid), cols=4)
+            print(f"[sample] generated grid -> {grid_path}")
+            return grid_path
+        except Exception as e:
+            print(f"[sample] warning: failed to generate sample grid: {e}")
+            return None
+
     def save(self, final: bool = False):
-        path = self.ckpt.save(float(self.cur_nimg) / 1000.0)
+        kimg = float(self.cur_nimg) / 1000.0
+        path = self.ckpt.save(kimg)
         if final:
             print(f"[ckpt] final saved: {path}")
+
+        sample_path = self._generate_sample_grid(kimg)
+
+        if self.auto_backup:
+            try:
+                from .backup import trigger_backup
+                trigger_backup(
+                    output_dir=self.cfg["output_dir"],
+                    kimg=kimg,
+                    latest_ckpt_prefix=path,
+                    sample_path=sample_path,
+                    drive_dir=self.drive_dir,
+                    github_repo=self.github_repo,
+                    async_mode=not final,
+                )
+            except Exception as e:
+                print(f"[backup] warning: trigger backup error: {e}")
+
         return path

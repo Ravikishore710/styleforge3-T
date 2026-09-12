@@ -19,6 +19,7 @@ class CheckpointManager:
             self.ema_vars = ema_state.shadow
         for i, v in enumerate(self.ema_vars or []):
             payload[f"ema_{i}"] = v
+        self.ckpt_dir = ckpt_dir
         self.ckpt = tf.train.Checkpoint(**payload)
         self.manager = tf.train.CheckpointManager(self.ckpt, str(ckpt_dir),
                                                   max_to_keep=20)
@@ -31,11 +32,43 @@ class CheckpointManager:
         print(f"[ckpt] saved kimg={kimg:.0f} -> {path}")
         return path
 
-    def restore(self) -> bool:
-        if self.latest is None:
+    def restore(self, resume_dir: str | Path | None = None) -> bool:
+        if (resume_dir is None or resume_dir == "auto") and self.latest is None:
+            # Check if running in Kaggle and there's a previous session checkpoint in /kaggle/input
+            kaggle_input = Path("/kaggle/input")
+            if kaggle_input.exists():
+                candidates = list(kaggle_input.glob("**/ckpt-*.index"))
+                if candidates:
+                    # Sort candidates so the latest ckpt number is chosen
+                    candidates.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+                    auto_dir = candidates[0].parent
+                    print(f"[ckpt] auto-detected Kaggle input checkpoint directory: {auto_dir}")
+                    resume_dir = auto_dir
+
+        if resume_dir:
+            res_path = Path(resume_dir)
+            if res_path.exists():
+                src_dir = res_path if res_path.is_dir() else res_path.parent
+                if src_dir.resolve() != self.ckpt_dir.resolve():
+                    print(f"[ckpt] importing checkpoints from {src_dir} into {self.ckpt_dir}")
+                    import shutil
+                    for f in src_dir.iterdir():
+                        if f.is_file() and (f.name.startswith("ckpt-") or f.name == "checkpoint"):
+                            dest = self.ckpt_dir / f.name
+                            if not dest.exists():
+                                shutil.copy2(f, dest)
+                    # refresh manager
+                    self.manager = tf.train.CheckpointManager(self.ckpt, str(self.ckpt_dir), max_to_keep=20)
+
+        target = self.latest
+        if target is None and resume_dir:
+            target = tf.train.latest_checkpoint(str(resume_dir))
+
+        if target is None:
+            print("[ckpt] no checkpoint found to restore")
             return False
-        self.ckpt.restore(self.latest).expect_partial()
-        print(f"[ckpt] restored {self.latest}")
+        self.ckpt.restore(target).expect_partial()
+        print(f"[ckpt] restored {target}")
         return True
 
     def restore_ema_into(self, G_ema) -> None:
