@@ -20,6 +20,8 @@ def seeded_z(batch: int, z_dim: int, seed: int) -> np.ndarray:
 @tf.function
 def _generate(G_ema, z, w_mean, psi, noise_mode):
     ws = G_ema.mapping(z)
+    w_mean = tf.cast(w_mean, ws.dtype)
+    psi = tf.cast(psi, ws.dtype)
     ws = w_mean + psi * (ws - w_mean)
     return G_ema.synthesis(ws, noise_mode=noise_mode)
 
