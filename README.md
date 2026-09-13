@@ -1,4 +1,4 @@
-# StyleForge3-T (AliasForge)
+# StyleForge3-T
 
 **A Clean-Room StyleGAN3-T Generative Architecture Built from First Principles in TensorFlow 2.**
 
