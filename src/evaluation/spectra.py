@@ -1,11 +1,11 @@
-"""Radial frequency spectra: connects generated images to alias-free claims."""
+# Radial frequency spectra: connects generated images to alias-free claims
 from __future__ import annotations
 
 import numpy as np
 
 
 def radial_spectrum(images: np.ndarray) -> np.ndarray:
-    """Mean radially-averaged power spectrum, (res//2,) float64."""
+    # Mean radially-averaged power spectrum, (res//2,) float64
     x = np.mean(images.astype(np.float64), axis=-1)
     f = np.fft.fftshift(np.fft.fft2(x - x.mean(axis=(1, 2), keepdims=True)), axes=(1, 2))
     p = np.abs(f) ** 2

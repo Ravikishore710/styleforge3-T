@@ -1,4 +1,4 @@
-"""Equalized-parameterization layers and style-modulated convolution."""
+# Equalized-parameterization layers and style-modulated convolution
 from __future__ import annotations
 
 import numpy as np
@@ -10,8 +10,7 @@ def _he_std(fan_in: float, gain: float = 1.0) -> float:
 
 
 class EqualizedDense(tf.keras.layers.Layer):
-    """Dense with equalized learning rate: kernel ~ N(0,1), runtime scale
-    lr_mult * gain / sqrt(fan_in) (both init scale and effective LR)."""
+    # Dense with equalized learning rate: kernel ~ N(0,1), runtime scale
 
     def __init__(self, units: int, lr_mult: float = 1.0, gain: float = 1.0,
                  activation=None, name: str = "eq_dense"):
@@ -43,7 +42,7 @@ class EqualizedDense(tf.keras.layers.Layer):
 
 
 class EqualizedConv2D(tf.keras.layers.Layer):
-    """Conv2D with equalized parameterization (same scheme as EqualizedDense)."""
+    # Conv2D with equalized parameterization (same scheme as EqualizedDense)
 
     def __init__(self, filters: int, kernel_size: int = 3, stride: int = 1,
                  lr_mult: float = 1.0, gain: float = 1.0, name: str = "eq_conv"):
@@ -76,12 +75,7 @@ class EqualizedConv2D(tf.keras.layers.Layer):
 
 
 class ModulatedConv2D(tf.keras.layers.Layer):
-    """Style-modulated 3x3 (or 1x1) convolution with optional demodulation.
-
-    styles: (B, in_channels) per-sample scale factors (~1 at init).
-    Demodulation rescales each output channel so that the style magnitude
-    does not propagate (StyleGAN2 'demodulate').
-    """
+    # Style-modulated 3x3 (or 1x1) convolution with optional demodulation
 
     def __init__(self, out_channels: int, kernel_size: int = 3,
                  demodulate: bool = True, lr_mult: float = 1.0,

@@ -1,4 +1,4 @@
-"""Plot real-vs-fake radial spectra."""
+# Plot real-vs-fake radial spectra
 from __future__ import annotations
 
 import matplotlib

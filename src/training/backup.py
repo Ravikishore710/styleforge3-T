@@ -1,9 +1,4 @@
-"""Automated checkpoint backup: GitHub Releases & Google Drive.
-
-Runs asynchronously in the background so training is never interrupted.
-Uses GitHub Releases API to bypass Git's 100MB file limit for checkpoint archives (up to 2GB).
-Automatically detects Kaggle Secrets GITHUB_TOKEN or environment variable.
-"""
+# Automated checkpoint backup: GitHub Releases & Google Drive
 from __future__ import annotations
 
 import mimetypes
@@ -19,7 +14,7 @@ import requests
 
 
 def get_github_token() -> str | None:
-    """Retrieve GitHub token from environment variable or Kaggle Secrets."""
+    # Retrieve GitHub token from environment variable or Kaggle Secrets
     token = os.environ.get("GITHUB_TOKEN")
     if token:
         return token.strip()
@@ -34,7 +29,7 @@ def get_github_token() -> str | None:
 
 
 def get_repo_slug(default: str = "Ravikishore710/styleforge3-T") -> str:
-    """Detect repo slug (owner/repo) from git remote or return default."""
+    # Detect repo slug (owner/repo) from git remote or return default
     try:
         out = subprocess.check_output(
             ["git", "remote", "get-url", "origin"],
@@ -57,7 +52,7 @@ def upload_to_github_release(
     files: list[Path | str],
     body: str = "",
 ) -> bool:
-    """Create or get a GitHub Release and upload file assets."""
+    # Create or get a GitHub Release and upload file assets
     headers = {
         "Authorization": f"Bearer {token}",
         "Accept": "application/vnd.github.v3+json",
@@ -127,7 +122,7 @@ def upload_to_github_release(
 
 
 def create_checkpoint_zip(ckpt_dir: Path, target_zip: Path, prefix: str | None = None) -> Path:
-    """Bundle checkpoint files matching prefix (or all current checkpoints) into a zip archive."""
+    # Bundle checkpoint files matching prefix (or all current checkpoints) into a zip archive
     target_zip.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(target_zip, "w", zipfile.ZIP_DEFLATED) as zf:
         meta_file = ckpt_dir / "checkpoint"
@@ -149,7 +144,7 @@ def _do_backup(
     drive_dir: str | None = None,
     github_repo: str | None = None,
 ):
-    """Worker function executed in background thread."""
+    # Worker function executed in background thread
     try:
         tag_name = f"ckpt-kimg-{int(kimg):04d}"
         release_name = f"Checkpoint kimg {int(kimg)}"
@@ -195,7 +190,7 @@ def trigger_backup(
     github_repo: str | None = None,
     async_mode: bool = True,
 ):
-    """Create archive of the latest checkpoint and upload to GitHub and/or Drive."""
+    # Create archive of the latest checkpoint and upload to GitHub and/or Drive
     ckpt_dir = Path(output_dir) / "checkpoints"
     if not ckpt_dir.exists():
         return

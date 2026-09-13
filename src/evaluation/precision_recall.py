@@ -1,4 +1,4 @@
-"""Improved precision & recall for generative models (Kynkaanniemi et al. 2019)."""
+# Improved precision & recall for generative models (Kynkaanniemi et al. 2019)
 from __future__ import annotations
 
 import numpy as np
@@ -6,8 +6,7 @@ import numpy as np
 
 def _radii_and_hits(feats_other: np.ndarray, feats_own: np.ndarray,
                     k: int = 3, chunk: int = 1000) -> tuple[np.ndarray, np.ndarray]:
-    """radii: distance to k-th NN within own set; hits: count of other-set
-    points inside each own-set sphere."""
+    # radii: distance to k-th NN within own set; hits: count of other-set
     n = len(feats_own)
     radii = np.zeros(n, np.float64)
     hits = np.zeros(n, np.int64)

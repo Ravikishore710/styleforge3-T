@@ -1,4 +1,4 @@
-"""Checkpointing: models + optimizers + training state, with resume support."""
+# Checkpointing: models + optimizers + training state, with resume support
 from __future__ import annotations
 
 from pathlib import Path

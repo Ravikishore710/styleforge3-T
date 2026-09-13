@@ -1,8 +1,4 @@
-"""Adversarial training engine: AMP, lazy R1, EMA, checkpointing, logging.
-
-Training is measured in kimg (thousands of real images seen), matching GAN
-literature convention. One 'step' = one G update + one D update on a batch.
-"""
+# Adversarial training engine: AMP, lazy R1, EMA, checkpointing, logging
 from __future__ import annotations
 
 import json

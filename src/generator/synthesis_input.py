@@ -1,12 +1,4 @@
-"""Band-limited Fourier synthesis input with a learned affine transform.
-
-Random frequencies are drawn on a 2-D disc (radius capped at `bandwidth`
-cycles/unit), random phases, and each channel emits sin(2*pi*<f, x> + phase)
-sampled on the pixel grid. An affine of w produces a per-sample 2x2
-coordinate transform (identity at init), enabling learned zoom/rotation.
-An optional integer/fractional `shift` (in output pixels) translates the
-sampled field, which the equivariance metrics rely on.
-"""
+# Band-limited Fourier synthesis input with a learned affine transform
 from __future__ import annotations
 
 import numpy as np

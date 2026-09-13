@@ -1,4 +1,4 @@
-"""Training-curve plots from the JSONL log."""
+# Training-curve plots from the JSONL log
 from __future__ import annotations
 
 import json

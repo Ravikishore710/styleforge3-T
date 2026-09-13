@@ -1,12 +1,4 @@
-"""Alias-free synthesis network (StyleGAN3-T class).
-
-Layer schedule: input Fourier field at 4x4 (content band = input Nyquist),
-then a geometric progression of cutoff frequencies (doubling per stage,
-cycles/image) up to the output Nyquist, with `num_critical` final layers
-operating at the target sampling rate without resampling. Each non-critical
-layer: modulated conv -> optional noise -> [up 2x with anti-imaging filter]
--> bias -> leaky ReLU (continuous domain) -> [low-pass at the output cutoff].
-"""
+# Alias-free synthesis network (StyleGAN3-T class)
 from __future__ import annotations
 
 import numpy as np

@@ -1,4 +1,4 @@
-"""z -> w mapping network (StyleGAN3 default depth: 2)."""
+# z -> w mapping network (StyleGAN3 default depth: 2)
 from __future__ import annotations
 
 import tensorflow as tf

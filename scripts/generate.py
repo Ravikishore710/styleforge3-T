@@ -1,10 +1,4 @@
-"""Inference: seeded samples, truncation grids, interpolations.
-
-Usage:
-  python scripts/generate.py --config configs/ffhq_256.yaml --num-images 16 --seed 42
-  python scripts/generate.py --config configs/ffhq_256.yaml --truncation-grid
-  python scripts/generate.py --config configs/ffhq_256.yaml --interpolate
-"""
+# Inference: seeded samples, truncation grids, interpolations
 from __future__ import annotations
 
 import argparse

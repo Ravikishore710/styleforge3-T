@@ -1,4 +1,4 @@
-"""Truncation trick: w' = w_mean + psi * (w - w_mean)."""
+# Truncation trick: w' = w_mean + psi * (w - w_mean)
 from __future__ import annotations
 
 from pathlib import Path

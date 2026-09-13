@@ -1,10 +1,4 @@
-"""Residual convolutional discriminator with filtered downsampling.
-
-Architecture (StyleGAN2/3 style): from_rgb 1x1 at full resolution, then a
-chain of residual blocks (3x3 conv -> LReLU -> 3x3 conv -> LReLU -> filtered
-downsample, with a 1x1 + downsample skip), minibatch-stddev epilogue at 4x4,
-final conv and single logit. Convs use equalized parameterization.
-"""
+# Residual convolutional discriminator with filtered downsampling
 from __future__ import annotations
 
 import numpy as np
@@ -24,7 +18,7 @@ def lrelu(x):
 
 
 class MinibatchStd(tf.keras.layers.Layer):
-    """Concatenates the across-batch std (averaged over channels) as a feature map."""
+    # Concatenates the across-batch std (averaged over channels) as a feature map
 
     def __init__(self, group_size: int = 4, name: str = "minibatch_std"):
         super().__init__(name=name)

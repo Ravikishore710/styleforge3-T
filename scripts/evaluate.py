@@ -1,8 +1,4 @@
-"""Full evaluation: FID, precision/recall, equivariance, spectra, diversity.
-
-Usage:
-  python scripts/evaluate.py --config configs/ffhq_256.yaml --fid-images 5000
-"""
+# Full evaluation: FID, precision/recall, equivariance, spectra, diversity
 from __future__ import annotations
 
 import argparse

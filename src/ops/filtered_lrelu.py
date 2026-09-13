@@ -1,14 +1,4 @@
-"""Continuous-domain leaky ReLU with band limiting (StyleGAN3-T core op).
-
-Pipeline:
-    [optional] zero-stuff x up -> conv with fu -> add bias
-    -> leaky ReLU in the continuous (upsampled) domain
-    -> conv with fd -> [optional] decimate
-
-The nonlinearity therefore never acts on a critically sampled signal, which
-is what removes the aliasing that would otherwise couple features to absolute
-pixel coordinates.
-"""
+# Continuous-domain leaky ReLU with band limiting (StyleGAN3-T core op)
 from __future__ import annotations
 
 import tensorflow as tf

@@ -1,9 +1,4 @@
-"""Filtered resampling: upsample (zero-stuff) -> FIR conv -> decimate.
-
-Separable application of a symmetric 1-D FIR filter along rows and columns
-via depthwise conv2d. Everything runs in float32 for numerical stability and
-casts back to the input dtype on return.
-"""
+# Filtered resampling: upsample (zero-stuff) -> FIR conv -> decimate
 from __future__ import annotations
 
 import numpy as np
@@ -38,8 +33,7 @@ def _upsample_zero_stuff(x: tf.Tensor, up: int) -> tf.Tensor:
 
 def upfirdn2d(x: tf.Tensor, f, up: int = 1, down: int = 1,
               gain: float = 1.0) -> tf.Tensor:
-    """Upsample by `up` (zero-stuffing), convolve with separable FIR `f`,
-    decimate by `down`. Output length along each axis: floor((H*up)/down)."""
+    # Upsample by `up` (zero-stuffing), convolve with separable FIR `f`,
     in_dtype = x.dtype
     x = tf.cast(x, tf.float32)
     cin = int(x.shape[-1])
@@ -64,10 +58,10 @@ def upfirdn2d(x: tf.Tensor, f, up: int = 1, down: int = 1,
 
 
 def upsample2d(x: tf.Tensor, f, gain: float = 4.0) -> tf.Tensor:
-    """2x upsampling with anti-imaging filter and energy gain up^2."""
+    # 2x upsampling with anti-imaging filter and energy gain up^2
     return upfirdn2d(x, f, up=2, down=1, gain=gain)
 
 
 def downsample2d(x: tf.Tensor, f, gain: float = 1.0) -> tf.Tensor:
-    """2x downsampling with anti-alias filter."""
+    # 2x downsampling with anti-alias filter
     return upfirdn2d(x, f, up=1, down=2, gain=gain)

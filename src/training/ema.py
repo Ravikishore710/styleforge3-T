@@ -1,4 +1,4 @@
-"""Exponential moving average of generator weights (the inference generator)."""
+# Exponential moving average of generator weights (the inference generator)
 from __future__ import annotations
 
 import numpy as np

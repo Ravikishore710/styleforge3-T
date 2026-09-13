@@ -1,9 +1,4 @@
-"""Train AliasForge from random initialization.
-
-Usage:
-  python scripts/train.py --config configs/ffhq_64.yaml
-  python scripts/train.py --config configs/ffhq_256.yaml --resume
-"""
+# Train AliasForge from random initialization
 from __future__ import annotations
 
 import argparse

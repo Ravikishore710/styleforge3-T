@@ -1,15 +1,4 @@
-"""FIR filter design: Kaiser-windowed low-pass filters and binomial filters.
-
-All filters are 1-D, symmetric, normalized to DC gain 1. Cutoffs and half
-widths are given in cycles/pixel relative to the sampling rate of the signal
-they will be applied to.
-
-Design notes (AliasForge conventions, following the StyleGAN3 paper's rules):
-- numtaps is derived from the Kaiser formulas for a target attenuation
-  (numtaps ~= (A - 8) / (2.285 * dw)), made odd, and capped.
-- cutoffs are clamped so cutoff + half_width stays below Nyquist.
-- a 1-tap filter degenerates to the identity [1].
-"""
+# FIR filter design: Kaiser-windowed low-pass filters and binomial filters
 from __future__ import annotations
 
 import numpy as np
@@ -35,7 +24,7 @@ def _kaiser_window(numtaps: int, beta: float) -> np.ndarray:
 
 
 def clamp_cutoff(cutoff: float, half_width: float, sampling_rate: float) -> tuple[float, float]:
-    """Keep cutoff + half_width below Nyquist of the given sampling rate."""
+    # Keep cutoff + half_width below Nyquist of the given sampling rate
     nyq = sampling_rate / 2.0
     cutoff = min(float(cutoff), nyq - 1e-3)
     half_width = min(float(half_width), max(nyq - cutoff - 1e-3, 1e-4))
@@ -46,13 +35,7 @@ def design_kaiser_filter(cutoff: float, half_width: float,
                          sampling_rate: float,
                          attenuation_db: float = ATTENUATION_DB,
                          max_taps: int = MAX_TAPS) -> np.ndarray:
-    """Symmetric Kaiser low-pass FIR, DC gain 1. Identity if 1 tap suffices.
-
-    Args:
-        cutoff: pass-band edge, cycles/pixel.
-        half_width: half the transition width, cycles/pixel.
-        sampling_rate: signal sampling rate (samples/pixel unit scale).
-    """
+    # Symmetric Kaiser low-pass FIR, DC gain 1. Identity if 1 tap suffices
     cutoff, half_width = clamp_cutoff(cutoff, half_width, sampling_rate)
     width = max(2.0 * half_width / sampling_rate, 1e-6)
     # numtaps estimate from Kaiser formulas (A in dB, dw normalized to fs).
@@ -72,12 +55,12 @@ def design_kaiser_filter(cutoff: float, half_width: float,
 
 
 def lowpass_kaiser(cutoff: float, half_width: float, sampling_rate: float) -> np.ndarray:
-    """Alias of design_kaiser_filter with AliasForge defaults."""
+    # Alias of design_kaiser_filter with AliasForge defaults
     return design_kaiser_filter(cutoff, half_width, sampling_rate)
 
 
 def binomial_filter(taps: int = 5) -> np.ndarray:
-    """Binomial low-pass (taps=5 -> [1,4,6,4,1]/16), DC gain 1."""
+    # Binomial low-pass (taps=5 -> [1,4,6,4,1]/16), DC gain 1
     from math import comb
     f = np.array([comb(taps - 1, k) for k in range(taps)], dtype=np.float64)
     return (f / f.sum()).astype(np.float32)

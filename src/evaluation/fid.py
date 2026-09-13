@@ -1,4 +1,4 @@
-"""Fréchet Inception Distance with InceptionV3 features (scipy sqrtm)."""
+# Fréchet Inception Distance with InceptionV3 features (scipy sqrtm)
 from __future__ import annotations
 
 import numpy as np
@@ -17,7 +17,7 @@ def _inception_model():
 
 
 def inception_features(images: np.ndarray, batch: int = 50) -> np.ndarray:
-    """images in [-1,1], any square HxW; resized to 299 internally."""
+    # images in [-1,1], any square HxW; resized to 299 internally
     model = _inception_model()
     feats = []
     for i in range(0, len(images), batch):

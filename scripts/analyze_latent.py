@@ -1,4 +1,4 @@
-"""Latent-space analysis: truncation sweep + interpolation sweeps."""
+# Latent-space analysis: truncation sweep + interpolation sweeps
 from __future__ import annotations
 
 import argparse

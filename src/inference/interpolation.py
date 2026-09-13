@@ -1,4 +1,4 @@
-"""Latent interpolation: linear in w and spherical in z."""
+# Latent interpolation: linear in w and spherical in z
 from __future__ import annotations
 
 import numpy as np

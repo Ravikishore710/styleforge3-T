@@ -1,4 +1,4 @@
-"""Interpolation visualizations (rows saved as PNG)."""
+# Interpolation visualizations (rows saved as PNG)
 from __future__ import annotations
 
 import numpy as np

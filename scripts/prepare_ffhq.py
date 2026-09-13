@@ -1,18 +1,4 @@
-"""Prepare FFHQ data.
-
-Modes:
-  --source folder --src PATH   copy+resize an existing folder of face images
-                               into data/ffhq_r{res} (default working res)
-  --source zip    --src PATH   extract a zip of images, then resize
-  --source drive  --resolution 128|256|512|1024
-                               download the official FFHQ archive via gdown
-                               (1024: Google Drive folder, needs gdown)
-  --verify                     validate an existing prepared folder
-
-Examples:
-  python scripts/prepare_ffhq.py --source folder --src /kaggle/input/ffhq/images --resolution 256
-  python scripts/prepare_ffhq.py --source drive --resolution 256
-"""
+# Prepare FFHQ data
 from __future__ import annotations
 
 import argparse

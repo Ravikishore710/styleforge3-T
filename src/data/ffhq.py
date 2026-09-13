@@ -1,10 +1,4 @@
-"""FFHQ dataset pipeline: scan -> decode -> validate -> resize -> [-1,1]
--> optional horizontal mirror -> batch -> prefetch.
-
-Expects a folder of PNG/JPEG images (see scripts/prepare_ffhq.py). GAN
-training uses the full pool; no train/val split is needed for the generator
-itself (evaluation draws reference statistics from the same pool).
-"""
+# FFHQ dataset pipeline: scan -> decode -> validate -> resize -> [-1,1]
 from __future__ import annotations
 
 import json

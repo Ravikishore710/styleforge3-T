@@ -1,4 +1,4 @@
-"""Latent sampling engine: z ~ N(0,I), seeded determinism, image export."""
+# Latent sampling engine: z ~ N(0,I), seeded determinism, image export
 from __future__ import annotations
 
 from pathlib import Path
@@ -28,7 +28,7 @@ def _generate(G_ema, z, w_mean, psi, noise_mode):
 
 def generate(G_ema, z: np.ndarray, noise_mode: str = "const",
              truncation_psi: float = 1.0, w_mean: np.ndarray | None = None):
-    """Generate images from latents with optional truncation."""
+    # Generate images from latents with optional truncation
     z = tf.constant(np.asarray(z, np.float32))
     if truncation_psi != 1.0:
         if w_mean is None:

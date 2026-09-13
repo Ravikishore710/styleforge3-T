@@ -1,4 +1,4 @@
-"""Latent diversity: normalized pairwise VGG distance statistics."""
+# Latent diversity: normalized pairwise VGG distance statistics
 from __future__ import annotations
 
 import numpy as np

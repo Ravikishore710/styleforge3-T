@@ -1,11 +1,4 @@
-"""StyleGAN3-style equivariance metrics (translation int/frac, rotation).
-
-Implemented through the public generator API: the Fourier synthesis input
-accepts a fractional pixel shift, so we can compare
-    T(G(z))   vs   G(z; shift applied on the sampling grid)
-directly. Rotation equivariance is measured on the output with bilinear
-resampling (scipy). Distances use VGG16 features (LPIPS-lite).
-"""
+# StyleGAN3-style equivariance metrics (translation int/frac, rotation)
 from __future__ import annotations
 
 import numpy as np

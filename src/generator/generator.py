@@ -1,4 +1,4 @@
-"""Full generator: MappingNetwork -> SynthesisNetwork."""
+# Full generator: MappingNetwork -> SynthesisNetwork
 from __future__ import annotations
 
 import tensorflow as tf
