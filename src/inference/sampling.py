@@ -31,10 +31,18 @@ def generate(G_ema, z: np.ndarray, noise_mode: str = "const",
     """Generate images from latents with optional truncation."""
     z = tf.constant(np.asarray(z, np.float32))
     if truncation_psi != 1.0:
-        assert w_mean is not None, "truncation requires w_mean"
+        if w_mean is None:
+            from .truncation import cache_w_mean, estimate_w_mean
+            cfg = getattr(G_ema, "cfg", None)
+            if cfg is not None and "output_dir" in cfg:
+                w_mean = cache_w_mean(G_ema, cfg, num=2000)
+            else:
+                z_dim = int(z.shape[-1])
+                w_mean = estimate_w_mean(G_ema, z_dim, num=2000)
         w_mean = tf.constant(np.asarray(w_mean, np.float32))
     else:
-        w_mean = tf.zeros([int(G_ema.cfg["w_dim"])], tf.float32)
+        w_dim = int(G_ema.cfg["w_dim"]) if hasattr(G_ema, "cfg") and "w_dim" in G_ema.cfg else 512
+        w_mean = tf.zeros([w_dim], tf.float32)
     psi = tf.constant(float(truncation_psi), tf.float32)
     return _generate(G_ema, z, w_mean, psi, noise_mode).numpy()
 
