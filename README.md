@@ -46,6 +46,8 @@ Due to GPU resource reallocation and transitions to other scheduled production p
 
 ## Visual Training Progression
 
+![Training Progression Comparison](assets/progression_comparison.png)
+
 ### 1. Random Initialization (0 kimg)
 At step 0, the uninitialized generator outputs pure high-entropy chromatic noise:
 
