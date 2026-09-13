@@ -28,9 +28,12 @@ def load_G_ema(cfg):
     tf.keras.mixed_precision.set_global_policy("float32")
     G_ema = Generator(cfg)
     _ = G_ema(tf.zeros([1, int(cfg["z_dim"])]))
-    ckpt = CheckpointManager(cfg["output_dir"], G_ema, G_ema, G_ema, None, None,
+    from src.training.ema import EMA
+    ema = EMA(G_ema)
+    ckpt = CheckpointManager(cfg["output_dir"], G_ema, None, None, None, None,
                              tf.Variable(0, dtype=tf.int64),
-                             tf.Variable(0, dtype=tf.int64))
+                             tf.Variable(0, dtype=tf.int64),
+                             ema_state=ema)
     ckpt.restore()
     ckpt.restore_ema_into(G_ema)
     return G_ema
