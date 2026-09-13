@@ -70,6 +70,7 @@ class Trainer:
         if hasattr(self.g_opt, "get_unscaled_gradients"):
             grads = self.g_opt.get_unscaled_gradients(grads)
         grads = [g if g is not None else tf.zeros_like(v) for g, v in zip(grads, self.G.trainable_variables)]
+        grads, _ = tf.clip_by_global_norm(grads, 10.0)
         self.g_opt.apply_gradients(zip(grads, self.G.trainable_variables))
         return loss
 
@@ -86,6 +87,7 @@ class Trainer:
         if hasattr(self.d_opt, "get_unscaled_gradients"):
             grads = self.d_opt.get_unscaled_gradients(grads)
         grads = [g if g is not None else tf.zeros_like(v) for g, v in zip(grads, self.D.trainable_variables)]
+        grads, _ = tf.clip_by_global_norm(grads, 10.0)
         self.d_opt.apply_gradients(zip(grads, self.D.trainable_variables))
         return loss, tf.reduce_mean(real_logits), tf.reduce_mean(fake_logits)
 
@@ -100,6 +102,7 @@ class Trainer:
         if hasattr(self.d_opt, "get_unscaled_gradients"):
             grads = self.d_opt.get_unscaled_gradients(grads)
         grads = [g if g is not None else tf.zeros_like(v) for g, v in zip(grads, self.D.trainable_variables)]
+        grads, _ = tf.clip_by_global_norm(grads, 10.0)
         self.d_opt.apply_gradients(zip(grads, self.D.trainable_variables))
         return r1
 
