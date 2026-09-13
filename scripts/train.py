@@ -31,6 +31,9 @@ def main():
     ap.add_argument("--train-kimg", type=int, default=None, help="Override train_kimg")
     ap.add_argument("--tick-kimg", type=int, default=None, help="Override tick_kimg")
     ap.add_argument("--snap-kimg", type=int, default=None, help="Override snap_kimg")
+    ap.add_argument("--gamma", type=float, default=None, help="Override R1 gamma regularization weight")
+    ap.add_argument("--g-lr", type=float, default=None, help="Override G learning rate")
+    ap.add_argument("--d-lr", type=float, default=None, help="Override D learning rate")
     ap.add_argument("--github-repo", default=None, help="Override GitHub repo for backup (owner/repo)")
     ap.add_argument("--drive-dir", default=None, help="Google Drive directory for backup")
     ap.add_argument("--no-backup", action="store_true", help="Disable automatic cloud backups")
@@ -47,6 +50,12 @@ def main():
         overrides["tick_kimg"] = args.tick_kimg
     if args.snap_kimg:
         overrides["snap_kimg"] = args.snap_kimg
+    if args.gamma is not None:
+        overrides["gamma"] = args.gamma
+    if args.g_lr is not None:
+        overrides["G_lr"] = args.g_lr
+    if args.d_lr is not None:
+        overrides["D_lr"] = args.d_lr
     if args.resume_dir:
         overrides["resume_dir"] = args.resume_dir
     if args.github_repo:

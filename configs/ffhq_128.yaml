@@ -1,7 +1,8 @@
 experiment: ffhq128
 img_resolution: 128
 data_dir: data/ffhq_r128
-batch_size: 16
-train_kimg: 1200
+batch_size: 32
+train_kimg: 350
 tick_kimg: 2
 snap_kimg: 20
+gamma: 0.5
