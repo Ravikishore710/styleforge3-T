@@ -1,4 +1,4 @@
-# StyleForge3-T (AliasForge) - Technical Report
+# StyleForge3-T-draft - Technical Report
 
 ## 1. Problem
 High-quality human face generation from random Gaussian noise initialization on FFHQ (70,000 images) using alias-free, continuous-domain generative adversarial networks.

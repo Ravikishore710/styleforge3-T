@@ -1,4 +1,4 @@
-# Train AliasForge from random initialization
+# Train StyleForge3-T-draft from random initialization
 from __future__ import annotations
 
 import argparse

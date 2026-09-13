@@ -55,7 +55,7 @@ def design_kaiser_filter(cutoff: float, half_width: float,
 
 
 def lowpass_kaiser(cutoff: float, half_width: float, sampling_rate: float) -> np.ndarray:
-    # Alias of design_kaiser_filter with AliasForge defaults
+    # Convenience wrapper for Kaiser filter design with default parameters
     return design_kaiser_filter(cutoff, half_width, sampling_rate)
 
 

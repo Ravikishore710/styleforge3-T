@@ -1,4 +1,4 @@
-# StyleForge3-T
+# StyleForge3-T-draft
 
 **A Clean-Room StyleGAN3-T Generative Architecture Built from First Principles in TensorFlow 2.**
 
